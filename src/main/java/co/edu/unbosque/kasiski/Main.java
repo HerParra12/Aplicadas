@@ -1,43 +1,38 @@
 package co.edu.unbosque.kasiski;
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.function.DoubleFunction;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
+import java.util.stream.*;
 
 public class Main {
 
-	private static String [] letters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "Ñ", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+	private static String [] letters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 	private static int counter = 0;	
 	private static int maximoComun = 0;
+	private static String mensaje = "";
 	
 	public Main() {}
 	
 	
 	public static String group(String message) {
 		String newString = message.toUpperCase().replaceAll(" ", "").replaceAll(":", "");
-		System.out.println("Size = " + newString.length());
+		mensaje = newString;
 		Map <String, Integer> map = new TreeMap <>();
 		Map <String, Integer> mapping = new TreeMap <>();
 		Map <String, List <Integer>> mappingList = new HashMap<>();
 		for(int i = 0; i < newString.length(); i++) {
 			StringBuilder builder = new StringBuilder();
-			for(int j = i; j < i+26 && j < newString.length(); j++) {
+			for(int j = i; j < i+12 && j < newString.length(); j++) {
 				builder.append(newString.charAt(j));
 				map.put(builder.toString(), map.getOrDefault(builder.toString(), 0) +1);
 			}
 		}
 		
 		map.forEach((key, value) -> {
-			if(key.length() >= 3 && value > 1)                 
-				mapping.put(key, value);
+			if(key.length() >= 3 && value > 1) {
+				mapping.put(key, value);	
+			}
 		});
-		
 		mapping.forEach((key, value) -> {
 			if(!mappingList.containsKey(key)) {
-				System.out.println("Key = " + key + ", value = " + value);
 				StringBuilder builder = new StringBuilder(newString);
 				List <Integer> list = new ArrayList <> ();
 				int sizeMore = key.length();
@@ -76,16 +71,16 @@ public class Main {
 		listOfList.forEach(list -> {
 			list.forEach(number -> {
 				listOfList.forEach(subList -> {
-					if(subList.contains(number))
+					if(subList.contains(number)) 
 						counter ++;
 				});
-				if(counter == listOfList.size()) 
+				if(counter == listOfList.size())
 					maximoComun = Math.max(maximoComun, number);
 				counter = 0;
 			});
 		});
-		System.out.println("maximo = " + maximoComun);
-		
+		System.out.println("MAXIMO = "+ maximoComun);
+		if(maximoComun == 1) return null;
 		List <String> listString = new ArrayList <> ();
 		int index = 0;
 		while(index != maximoComun) {
@@ -113,24 +108,20 @@ public class Main {
 		List <String> listFinal = new ArrayList <> ();
 		Map <String, String> mapa = new HashMap <> ();
 		mappingOcurrences.forEach((string, mapOcurrences) -> {
-			System.out.println("Sub = "+ string);
-			
-			Map <String, Long> mapFinal = limitMapping(mapOcurrences);
+			System.out.println("Mensaje = " + string);
 			Map <String, Long> ocurrences = new HashMap <> ();
-			mapFinal.forEach((key, value) -> {
+			mapOcurrences.forEach((key, value) -> {
+				System.out.println("Key = " + key + ", value = " + value);
 				int position = indexChar(key);
-				int indexA = position +4 < 26? position +4 : (position +4) % 27;
-				int indexB = position +15 < 26? position +15 : (position +15) % 27;
-				int indexC = position +19 < 26? position +19 : (position +19) % 27;
-				//System.out.println("Key = " + key + ",value = " + value + ", position = " + position + ", indexA = " + indexA + ", letra=" + letters[indexA] + ", indexB = " + indexB + ",letra=" +letters[indexB]);
-				long suma = mapOcurrences.get(letters[indexA]) + mapOcurrences.get(letters[indexB]) + mapOcurrences.get(letters[indexC]);
+				int indexA = position +4 < 25? position +4 : (position +4) % 26;
+				int indexB = position +14 < 25? position +14 : (position +14) % 26;
+				long suma = mapOcurrences.get(letters[indexA]) + mapOcurrences.get(letters[indexB]);
 				ocurrences.put(key, suma);
 			});
 			String letraLlave = ocurrences.entrySet().stream().max((x,y) -> x.getValue().compareTo(y.getValue())).get().getKey();
 			listFinal.add(letraLlave);
 			mapa.put(string, letraLlave);
 		});
-		
 		
 		StringBuilder llave = new StringBuilder();
 		listString.forEach(cadena -> {
@@ -140,15 +131,22 @@ public class Main {
 		return llave.toString();
 	}
 	
+	/* 
+	 * LUEGO REFACTORIZAR PARA QUE INICIE LOS ELEMENTOS CON A, E, O Y S 
+	 * SI ALGUNO DE LOS ANTERIORES LETRAS DENTRO DE SUS POSTERIORES 4 U 11
+	 * LETRAS ES MENOR A 11 ENTONCES CAMBIA Y ASI SUCESIVAMENTE.
+	 * 
+	 */
+	
 	
 	public static void main(String[] args) {
-		Main.group("PBVRQ VICAD SKAÑS DETSJ PSIED BGGMP SLRPW RÑPWY EDSDE ÑDRDP CRCPQ MNPWK"
-				+ "UBZVS FNVRD MTIPW UEQVV CBOVN UEDIF QLONM VNUVR SEIKA ZYEAC EYEDS ETFPH"
-				+ "LBHGU ÑESOM EHLBX VAEEP UÑELI SEUEF WHUNM CLPQP MBRRN BPVIÑ MTIBV VEÑIC"
-				+ "ANSJA MTJOK MDODS ELPWI UFOZM QMVNF OHASE SRJWR SFQCO TWVMB JGRPW VSUEX"
-				+ "INQRS JEUEM GGRBD GNNIL AGSJI DSVSU EEINT GRUEE TFGGM PORDF OGTSS TOSEQ"
-				+ "OÑTGR RYVLP WJIFW XOTGG RPQRR JSKET XRNBL ZETGG NEMUO TXJAT ORVJH RSFHV" 
-				+ "NUEJI BCHAS EHEUE UOTIE FFGYA TGGMP IKTBW UEÑEN IEEU");
+//		Main.group("PBVRQ VICAD SKAÑS DETSJ PSIED BGGMP SLRPW RÑPWY EDSDE ÑDRDP CRCPQ MNPWK"
+//				+ "UBZVS FNVRD MTIPW UEQVV CBOVN UEDIF QLONM VNUVR SEIKA ZYEAC EYEDS ETFPH"
+//				+ "LBHGU ÑESOM EHLBX VAEEP UÑELI SEUEF WHUNM CLPQP MBRRN BPVIÑ MTIBV VEÑIC"
+//				+ "ANSJA MTJOK MDODS ELPWI UFOZM QMVNF OHASE SRJWR SFQCO TWVMB JGRPW VSUEX"
+//				+ "INQRS JEUEM GGRBD GNNIL AGSJI DSVSU EEINT GRUEE TFGGM PORDF OGTSS TOSEQ"
+//				+ "OÑTGR RYVLP WJIFW XOTGG RPQRR JSKET XRNBL ZETGG NEMUO TXJAT ORVJH RSFHV" 
+//				+ "NUEJI BCHAS EHEUE UOTIE FFGYA TGGMP IKTBW UEÑEN IEEU");
 		//System.out.println("\n\n----------\n\n");
 		
 		Main.group("TSMVMMPPCWCZUGXHPECPRFAUEIOBQ"
@@ -156,11 +154,7 @@ public class Main {
 				+ "KTSLVFWELTKRGHIZSFNIDFARMUENO"
 				+ "SKRGDIPHWSGVLEDMCMSMWKPIYOJST"
 				+ "LVFAHPBJIRAQIWHLDGAIYOUX");
-		//Main.group("RGHIE OJUHS USASK XRAWR FOBIY CYVRS FGBBL VNFDE YZSZR RWPPW XVNRG HRJAK RBWVR SFIYQ MEYGW HRPWM AUJIF OJGBA GYAAA RVAGH RQAIA QSVNQ LIESK TNFSP BUJEE IFEZO QSESX MPOUM N");
 	}	
-	
-	
-	
 	
 	public static Map <String, Long> limitMapping(Map <String, Long> map){
 		return map.entrySet()
@@ -187,17 +181,17 @@ public class Main {
 	}
 	
 	public static char [][] matrix(){
-		char matrix [] [] = new char [27][27];
+		char matrix [] [] = new char [26][26];
 		int index = 0;
-		for(int i = 0; i < 27; i++) {
-			for(int j = 0; j < 27; j++) {
+		for(int i = 0; i < 26; i++) {
+			for(int j = 0; j < 26; j++) {
 				matrix[i][j] = letters[index].toCharArray()[0];
-				if(index < 26)
+				if(index < 25)
 					index ++;
 				else
 					index = 0;
 			}
-			if(index < 26)
+			if(index < 25)
 				index ++;
 			else
 				index = 0;
@@ -207,8 +201,8 @@ public class Main {
 	
 	public static String toStringMatrix(char [][] matrix) {
 		StringBuilder builder = new StringBuilder();
-		for(int i = 0; i < 27; i++) {
-			for(int j = 0; j < 27; j++) {
+		for(int i = 0; i < 26; i++) {
+			for(int j = 0; j < 26; j++) {
 				builder.append("[ " + matrix[i][j] + " ]");
 			}
 			builder.append("\n");
@@ -240,6 +234,17 @@ public class Main {
 		System.out.println(builder);
 		return builder.toString();
 	}
+	
+	public static String descifrarMensage(String str, String key) {
+		StringBuilder builder = new StringBuilder();
+		char llave [] = llaveMatrix(str, key);
+		for(int i = 0; i < str.length(); i++) {
+			int indexKey = indexCharDos(llave[i]);
+			int indexLetter = indexCharDos(str.charAt(i));
+		}
+		return builder.toString();
+	}
+	
 	
 	public static int indexChar(String element) {
 		for(int i = 0; i < letters.length; i++) {
