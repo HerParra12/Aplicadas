@@ -1,4 +1,4 @@
-/*package co.edu.unbosque.kasiski;
+package co.edu.unbosque.kasiski;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.DoubleFunction;
@@ -7,12 +7,12 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
-public class Main {
+public class Test {
 
 	private static int counter = 0;	
 	private static int maximoComun = 0;
 	
-	public Main() {}
+	public Test() {}
 	
 	
 	public static void group(String message) {
@@ -120,7 +120,6 @@ public class Main {
 			Map <String, Long> mapFinal = limitMapping(mapOcurrences);
 			mapFinal.forEach((key, value) -> {
 				int position = (char) key.toCharArray()[0];
-				System.out.println("key = " + key + ", position = " + position);
 				
 			});
 		});
@@ -132,14 +131,11 @@ public class Main {
 		//Main.group("necesito el mar porque me enseña no se si aprendo musica o coinciencia: no se si es ola sola o profundo o solo ronca voz o deslumbrante suposicion de peces y navios");
 		//                1        2           3                 4                       5                     6                        7           8                 9                  10             11            12        13                           14          15          16      17      18 
 		//Main.group("El agente silente se occidente seguira al frente de los puntos calientes en el extremo oriente mientras alli haya gente que aliente que este valiente siga alli presente que no ausente aunque asiente con entereza que sea de forma aparente atentamente el teniente vicente morente");
-		Main.group("PBVRQ VICAD SKAÑS DETSJ PSIED BGGMP SLRPW RÑPWY EDSDE ÑDRDP CRCPQ MNPWK"
-				+ "UBZVS FNVRD MTIPW UEQVV CBOVN UEDIF QLONM VNUVR SEIKA ZYEAC EYEDS ETFPH"
-				+ "LBHGU ÑESOM EHLBX VAEEP UÑELI SEUEF WHUNM CLPQP MBRRN BPVIÑ MTIBV VEÑIC"
-				+ "ANSJA MTJOK MDODS ELPWI UFOZM QMVNF OHASE SRJWR SFQCO TWVMB JGRPW VSUEX"
-				+ "INQRS JEUEM GGRBD GNNIL AGSJI DSVSU EEINT GRUEE TFGGM PORDF OGTSS TOSEQ"
-				+ "OÑTGR RYVLP WJIFW XOTGG RPQRR JSKET XRNBL ZETGG NEMUO TXJAT ORVJH RSFHV" 
-				+ "NUEJI BCHAS EHEUE UOTIE FFGYA TGGMP IKTBW UEÑEN IEEU");
-		System.out.println("\n\n----------\n\n");
+		Main.group("TSMVMMPPCWCZUGXHPECPRFAUEIOBQ"
+				+ "WPPIMSFXIPCTSQPKSZNULOPACRDDP"
+				+ "KTSLVFWELTKRGHIZSFNIDFARMUENO"
+				+ "SKRGDIPHWSGVLEDMCMSMWKPIYOJST"
+				+ "LVFAHPBJIRAQIWHLDGAIYOUX");
 	}
 	
 	
@@ -186,9 +182,4 @@ public class Main {
 		Collections.sort(list);
 		return list;
 	}
-}package co.edu.unbosque.kasiski;
-
-public class Test {
-
 }
-*/

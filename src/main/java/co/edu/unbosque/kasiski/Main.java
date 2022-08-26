@@ -7,52 +7,43 @@ public class Main {
 	private static String [] letters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 	private static int counter = 0;	
 	private static int maximoComun = 0;
-	private static String mensaje = "";
 	
 	public Main() {}
 	
 	
 	public static String group(String message) {
-		String newString = message.toUpperCase().replaceAll(" ", "").replaceAll(":", "");
-		mensaje = newString;
-		Map <String, Integer> map = new TreeMap <>();
-		Map <String, Integer> mapping = new TreeMap <>();
 		Map <String, List <Integer>> mappingList = new HashMap<>();
-		for(int i = 0; i < newString.length(); i++) {
-			StringBuilder builder = new StringBuilder();
-			for(int j = i; j < i+12 && j < newString.length(); j++) {
-				builder.append(newString.charAt(j));
-				map.put(builder.toString(), map.getOrDefault(builder.toString(), 0) +1);
-			}
-		}
-		
-		map.forEach((key, value) -> {
-			if(key.length() >= 3 && value > 1) {
-				mapping.put(key, value);	
-			}
-		});
-		mapping.forEach((key, value) -> {
-			if(!mappingList.containsKey(key)) {
-				StringBuilder builder = new StringBuilder(newString);
-				List <Integer> list = new ArrayList <> ();
-				int sizeMore = key.length();
-				int indexOf = 0;
-				while(indexOf != -1) {
-					indexOf = builder.indexOf(key);
-					if(indexOf != -1) {
-						builder.delete(indexOf, indexOf + key.length());
-						if(list.isEmpty()) {
-							list.add(indexOf);
-						}else {
-							list.add(indexOf + sizeMore);
-							sizeMore = sizeMore + key.length();
-						}
-					}
-				}
-				mappingList.put(key, list);
-			}
-		});
-		
+		String newString = message.toUpperCase().replaceAll(" ", "");
+		newString.lines()
+		         .flatMap(string -> Stream.of(string.split("")))
+		         .filter(character -> character.matches("[A-Z]"))
+		         .collect(Collectors.groupingBy(letter -> letter, Collectors.counting()))
+		         .entrySet()
+		         .stream()
+		         .filter(entry -> entry.getKey().length() >= 3 && entry.getValue() > 1)
+		         .forEach(entry -> {
+		        	if(!mappingList.containsKey(entry.getKey())) {
+		        		StringBuilder builder = new StringBuilder(newString);
+		        		List <Integer> listElements = new ArrayList <> ();
+		        		int sizeMore = entry.getKey().length();
+		        		int indexOf = 0;
+		        		while(indexOf != -1) {
+		        			indexOf = builder.indexOf(entry.getKey());
+		        			if(indexOf != -1){
+		        				builder.delete(indexOf, indexOf + entry.getKey().length());
+		        				if(listElements.isEmpty()) {
+		        					listElements.add(indexOf);
+		        				}else {
+		        					listElements.add(indexOf + sizeMore);
+		        					sizeMore += entry.getKey().length();
+		        				}
+		        			}
+		        		}
+		        		mappingList.put(entry.getKey(), listElements);
+		        	}
+		         });
+		    
+			
 		List <Integer> listElements = new ArrayList <> ();
 		mappingList.forEach((key, list) -> {
 			List <Integer> spaceWords = new ArrayList <> ();
@@ -61,9 +52,10 @@ public class Main {
 			listElements.addAll(spaceWords);
 		});
 		
+		
 		List <List <Integer>> listOfList = new ArrayList <> (); 
-		listElements.forEach(element -> {
-			List <Integer> list = calculoDivisores(element);
+		listElements.forEach(number -> {
+			List <Integer> list = calculoDivisores(number);
 			Collections.reverse(list);
 			listOfList.add(list);
 		});
@@ -79,8 +71,9 @@ public class Main {
 				counter = 0;
 			});
 		});
-		System.out.println("MAXIMO = "+ maximoComun);
+		System.out.println("maximo comun divisor = "+ maximoComun);
 		if(maximoComun == 1) return null;
+		
 		List <String> listString = new ArrayList <> ();
 		int index = 0;
 		while(index != maximoComun) {
@@ -93,68 +86,46 @@ public class Main {
 			listString.add(builder.toString());
 			index ++;
 		}
-		
-		Map <String, Map <String, Long>> mappingOcurrences = new HashMap <> ();
-		listString.forEach(string -> {
-			Map <String, Long> mappingLetters = string.lines()
-													  .flatMap(x -> Stream.of(x.split("")))
-													  .collect(Collectors.groupingBy(key -> key.toString(), HashMap :: new, Collectors.counting()));
-			for(String letter : letters) 
-				if(!mappingLetters.containsKey(letter))
-					mappingLetters.put(letter, 0L);
-			mappingOcurrences.put(string, mappingLetters);
+		listString.forEach(x -> {
+			System.out.println("cadena = " + x);
+			x.lines()
+             .flatMap(string -> Stream.of(string.split("")))
+             .collect(Collectors.groupingBy(key -> key.toString(), Collectors.counting()))
+             .forEach((key, value) -> System.out.println("Key = " + key + ", value = " + value));
 		});
 		
-		List <String> listFinal = new ArrayList <> ();
-		Map <String, String> mapa = new HashMap <> ();
-		mappingOcurrences.forEach((string, mapOcurrences) -> {
-			System.out.println("Mensaje = " + string);
-			Map <String, Long> ocurrences = new HashMap <> ();
-			mapOcurrences.forEach((key, value) -> {
-				System.out.println("Key = " + key + ", value = " + value);
-				int position = indexChar(key);
-				int indexA = position +4 < 25? position +4 : (position +4) % 26;
-				int indexB = position +14 < 25? position +14 : (position +14) % 26;
-				long suma = mapOcurrences.get(letters[indexA]) + mapOcurrences.get(letters[indexB]);
-				ocurrences.put(key, suma);
-			});
-			String letraLlave = ocurrences.entrySet().stream().max((x,y) -> x.getValue().compareTo(y.getValue())).get().getKey();
-			listFinal.add(letraLlave);
-			mapa.put(string, letraLlave);
-		});
-		
-		StringBuilder llave = new StringBuilder();
-		listString.forEach(cadena -> {
-			llave.append(mapa.get(cadena));
-		});
-		System.out.println("LLave del metodo = " + llave);
-		return llave.toString();
+		return "";
 	}
 	
-	/* 
-	 * LUEGO REFACTORIZAR PARA QUE INICIE LOS ELEMENTOS CON A, E, O Y S 
-	 * SI ALGUNO DE LOS ANTERIORES LETRAS DENTRO DE SUS POSTERIORES 4 U 11
-	 * LETRAS ES MENOR A 11 ENTONCES CAMBIA Y ASI SUCESIVAMENTE.
-	 * 
+	/*
+	 * A = 8.34
+	 * E = 12.60
+	 * O = 7.70
+	 * T = 9.37
+	 * ETA
+	 * ETAO -> A E O T
+	 * ETAON -> A E O T N
 	 */
 	
-	
 	public static void main(String[] args) {
-//		Main.group("PBVRQ VICAD SKAÑS DETSJ PSIED BGGMP SLRPW RÑPWY EDSDE ÑDRDP CRCPQ MNPWK"
-//				+ "UBZVS FNVRD MTIPW UEQVV CBOVN UEDIF QLONM VNUVR SEIKA ZYEAC EYEDS ETFPH"
-//				+ "LBHGU ÑESOM EHLBX VAEEP UÑELI SEUEF WHUNM CLPQP MBRRN BPVIÑ MTIBV VEÑIC"
-//				+ "ANSJA MTJOK MDODS ELPWI UFOZM QMVNF OHASE SRJWR SFQCO TWVMB JGRPW VSUEX"
-//				+ "INQRS JEUEM GGRBD GNNIL AGSJI DSVSU EEINT GRUEE TFGGM PORDF OGTSS TOSEQ"
-//				+ "OÑTGR RYVLP WJIFW XOTGG RPQRR JSKET XRNBL ZETGG NEMUO TXJAT ORVJH RSFHV" 
-//				+ "NUEJI BCHAS EHEUE UOTIE FFGYA TGGMP IKTBW UEÑEN IEEU");
-		//System.out.println("\n\n----------\n\n");
-		
 		Main.group("TSMVMMPPCWCZUGXHPECPRFAUEIOBQ"
 				+ "WPPIMSFXIPCTSQPKSZNULOPACRDDP"
 				+ "KTSLVFWELTKRGHIZSFNIDFARMUENO"
 				+ "SKRGDIPHWSGVLEDMCMSMWKPIYOJST"
 				+ "LVFAHPBJIRAQIWHLDGAIYOUX");
+		System.out.println(Main.toStringMatrix(Main.matrix()));
 	}	
+	
+	public static boolean isLetterAEOS(String letter) {
+		return letter.matches("^[AEOS]$");
+	}
+	
+	public static int sizeString(Map <String, Integer> map) {
+		map.entrySet().stream().filter(mapa -> mapa.getKey().length() > 2 && mapa.getValue() > 1);
+		return 0;
+	}
+	
+	
 	
 	public static Map <String, Long> limitMapping(Map <String, Long> map){
 		return map.entrySet()
@@ -235,6 +206,7 @@ public class Main {
 		return builder.toString();
 	}
 	
+	@SuppressWarnings("unused")
 	public static String descifrarMensage(String str, String key) {
 		StringBuilder builder = new StringBuilder();
 		char llave [] = llaveMatrix(str, key);
