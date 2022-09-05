@@ -9,4 +9,16 @@
   	<maven.compiler.target>17</maven.compiler.target>
   	<project.compiler.source>17</project.compiler.source>
   </properties>
+  
+  <dependencies>
+	<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-api</artifactId>
+    <version>5.9.0-RC1</version>
+    <scope>test</scope>
+</dependency>
+
+  </dependencies>
+
 </project>
